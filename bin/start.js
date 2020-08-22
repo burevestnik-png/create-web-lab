@@ -87,6 +87,16 @@ exec(
                     ( error2 ) => error2 || true);
             });
 
+        const filesToCopy = [
+
+        ];
+
+        for (let i = 0; i < filesToCopy.length; i += 1) {
+            fs.createReadStream(path.join(__dirname, `../${filesToCopy[i]}`)).pipe(
+                fs.createWriteStream(`${process.argv[2]}/${filesToCopy[i]}`)
+            );
+        }
+
         https.get(
             "https://raw.githubusercontent.com/burevestnik-png/create-web-lab/master/.gitignore",
             ( response ) => {
@@ -115,8 +125,9 @@ exec(
 
         console.log("Installing deps -- it might take a few minutes...");
         const deps = createDeps(packageJson.dependencies);
+        const devDeps = createDeps(packageJSON.devDependencies);
         exec(
-            `cd ${ projectName } && npm i -S ${ deps }`,
+            `cd ${ projectName } && npm i -S ${ deps } && npm i -D ${ devDeps }`,
             async ( npmErr, npmStdout, npmStderr ) => {
                 if (npmErr) {
                     console.error(`Some error while installing dependencies: ${ npmErr }`);
