@@ -1,10 +1,14 @@
 #!/usr/bin/env node
-const fs = require("fs-extra");
+const { init } = require('./index');
+
+init();
+
+/*const fs = require("fs-extra");
 const path = require("path");
 const https = require("https");
 const { exec } = require("child_process");
 
-const packageJson = require("../package.json");
+const pjson = require("./../package.json");
 
 const projectName = process.argv[2]
 let stylesheet = 'css';
@@ -26,14 +30,9 @@ const createDeps = ( deps ) => {
         .replace(/fs-extra[^\s]+/g, "");
 
     if (jqueryDisabled) {
-        depsArray = depsArray.replace(/jquery[@^.0-9]*/g, "");
+        depsArray = depsArray.replace(/jquery[@^.0-9]*!/g, "");
     }
 
-    console.log(depsArray)
-    console.log(typeof depsArray)
-
-    console.log(deps)
-    console.log(typeof deps)
     return depsArray;
 }
 
@@ -53,7 +52,7 @@ if (process.argv[3]) {
 }
 
 if (process.argv[4]) {
-    flagInitial(process.argv[3]);
+    flagInitial(process.argv[4]);
 }
 
 console.log('Your settings:')
@@ -87,16 +86,6 @@ exec(
                     ( error2 ) => error2 || true);
             });
 
-        const filesToCopy = [
-
-        ];
-
-        for (let i = 0; i < filesToCopy.length; i += 1) {
-            fs.createReadStream(path.join(__dirname, `../${filesToCopy[i]}`)).pipe(
-                fs.createWriteStream(`${process.argv[2]}/${filesToCopy[i]}`)
-            );
-        }
-
         https.get(
             "https://raw.githubusercontent.com/burevestnik-png/create-web-lab/master/.gitignore",
             ( response ) => {
@@ -124,8 +113,8 @@ exec(
         console.log("npm init -> done\n");
 
         console.log("Installing deps -- it might take a few minutes...");
-        const deps = createDeps(packageJson.dependencies);
-        const devDeps = createDeps(packageJSON.devDependencies);
+        const deps = createDeps(pjson.dependencies);
+        const devDeps = createDeps(pjson.devDependencies);
         exec(
             `cd ${ projectName } && npm i -S ${ deps } && npm i -D ${ devDeps }`,
             async ( npmErr, npmStdout, npmStderr ) => {
@@ -176,4 +165,4 @@ exec(
             }
         );
     }
-);
+);*/
