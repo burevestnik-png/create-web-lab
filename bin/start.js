@@ -7,7 +7,8 @@ const { exec } = require("child_process");
 const packageJson = require("../package.json");
 
 const projectName = process.argv[2]
-let stylesheet;
+let stylesheet = 'css';
+let jqueryDisabled = false;
 let template;
 
 const createScripts = () => {
@@ -17,31 +18,48 @@ const createScripts = () => {
 }
 
 const createDeps = ( deps ) => {
-    return Object.entries(deps)
+    let depsArray = Object.entries(deps)
         .map(( dep ) => `${ dep[0] }@${ dep[1] }`)
         .toString()
         .replace(/,/g, " ")
         .replace(/^/g, "")
         .replace(/fs-extra[^\s]+/g, "");
+
+    if (jqueryDisabled) {
+        depsArray = depsArray.replace(/jquery[@^.0-9]*/g, "");
+    }
+
+    console.log(depsArray)
+    console.log(typeof depsArray)
+
+    console.log(deps)
+    console.log(typeof deps)
+    return depsArray;
 }
 
-const getDependencies = ( dependencies ) =>
-    Object.entries(dependencies)
-        .map(( dep ) => `${ dep[0] }@${ dep[1] }`)
-        .toString()
-        .replace(/,/g, " ")
-        .replace(/^/g, "")
-        .replace(/fs-extra[^\s]+/g, "");
-
-if (process.argv[3]) {
-    if (process.argv[3].match(/^--styles=(css|scss)$/)) {
+const flagInitial = ( key ) => {
+    if (key.match(/^--styles=(css|scss)$/)) {
         const regexp = /scss/
-        stylesheet = regexp.test(process.argv[3]) ? 'scss' : 'css';
-        console.log(stylesheet);
+        stylesheet = regexp.test(key) ? 'scss' : 'css';
+    }
+
+    if (key.match(/^--disable-jquery=true$/)) {
+        jqueryDisabled = true;
     }
 }
 
-console.log("Started initializing project...");
+if (process.argv[3]) {
+    flagInitial(process.argv[3]);
+}
+
+if (process.argv[4]) {
+    flagInitial(process.argv[3]);
+}
+
+console.log('Your settings:')
+console.log('Disable jquery:', jqueryDisabled)
+console.log('Stylesheet:', stylesheet);
+console.log("\n\nStarted initializing project...");
 exec(
     `mkdir ${ projectName } && cd ${ projectName } && npm init -f`,
     ( initErr, initStdout, initStderr ) => {
@@ -96,10 +114,10 @@ exec(
         console.log("npm init -> done\n");
 
         console.log("Installing deps -- it might take a few minutes...");
-        const deps = getDependencies(packageJson.dependencies);
+        const deps = createDeps(packageJson.dependencies);
         exec(
             `cd ${ projectName } && npm i -S ${ deps }`,
-            ( npmErr, npmStdout, npmStderr ) => {
+            async ( npmErr, npmStdout, npmStderr ) => {
                 if (npmErr) {
                     console.error(`Some error while installing dependencies: ${ npmErr }`);
                     return;
@@ -108,13 +126,42 @@ exec(
                 console.log("Dependencies installed");
 
                 console.log("Copying additional files...");
-                fs.copy(path.join(__dirname, "../simple-template/index.html"), `${ projectName }/index.html`)
-                    .then(() =>
-                        console.log(
-                            `All done!\n\nYour project is now ready\n\nUse the below command to run the app.\n\ncd ${ projectName }\nnpm start`
-                        )
-                    )
-                    .catch(( err ) => console.error(err));
+                try {
+                    if (stylesheet === 'css') {
+                        await fs.copy(
+                            path.join(__dirname, "../simple-template/styles/css_style.css"),
+                            `${ projectName }/styles/style.css`
+                        );
+                    } else {
+                        await fs.copy(
+                            path.join(__dirname, "../simple-template/styles/scss_style.scss"),
+                            `${ projectName }/styles/style.scss`
+                        );
+                    }
+
+                    await fs.copy(
+                        path.join(__dirname, "../simple-template/index.html"),
+                        `${ projectName }/index.html`
+                    );
+                    await fs.copy(
+                        path.join(__dirname, "../simple-template/server/server.php"),
+                        `${ projectName }/server/server.php`
+                    );
+                    await fs.copy(
+                        path.join(__dirname, "../simple-template/js/script.js"),
+                        `${ projectName }/js/script.js`
+                    );
+                    await fs.copy(
+                        path.join(__dirname, "../simple-template/assets/logo.png"),
+                        `${ projectName }/assets/logo.png`
+                    );
+                } catch (e) {
+                    console.error(e)
+                }
+
+                console.log(
+                    `All done!\n\nYour project is now ready\n\nUse the below command to run the app.\n\ncd ${ projectName }\nnpm start`
+                )
             }
         );
     }

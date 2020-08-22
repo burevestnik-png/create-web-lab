@@ -2,7 +2,6 @@
   "name": "create-web-lab",
   "version": "1.0.0",
   "description": "Create-web-lab",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,7 +9,10 @@
     "type": "git",
     "url": "git+https://github.com/burevestnik-png/create-web-lab.git"
   },
-  "keywords": [],
+  "keywords": [
+    "cli",
+    "js"
+  ],
   "author": "Yaroslav Kulinkch <yaroslavsoldat2@gmail.com>",
   "license": "MIT",
   "bugs": {
@@ -19,7 +21,9 @@
   "homepage": "https://github.com/burevestnik-png/create-web-lab#readme",
   "dependencies": {
     "fs-extra": "^9.0.1",
-    "jquery": "^3.5.1",
+    "jquery": "^3.5.1"
+  },
+  "devDependencies": {
     "live-server": "^1.2.1"
   },
   "bin": {
