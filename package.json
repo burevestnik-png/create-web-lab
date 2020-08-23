@@ -1,7 +1,7 @@
 {
   "name": "create-web-lab",
   "version": "1.0.0",
-  "description": "Create-web-lab",
+  "description": "Create-web-lab CLI",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,9 +13,6 @@
     "cli",
     "js"
   ],
-  "devDependencies": {
-    "live-server": "^1.2.1"
-  },
   "author": "Yaroslav Kulinkch <yaroslavsoldat2@gmail.com>",
   "license": "MIT",
   "bugs": {
@@ -26,8 +23,7 @@
     "chalk": "^4.1.0",
     "commander": "^6.0.0",
     "fs-extra": "^9.0.1",
-    "inquirer": "^7.3.3",
-    "jquery": "^3.5.1"
+    "inquirer": "^7.3.3"
   },
   "bin": {
     "create-web-lab": "./bin/start.js"
