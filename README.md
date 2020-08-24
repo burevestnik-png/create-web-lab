@@ -49,7 +49,7 @@ my-lab
 
 No configuration or complicated folder structures, only the files you need to build your app.
 
-### Templates
+## Templates
 If you run ```create-web-lab -h``` in terminal, you will recognise, that there several templates, on which you
 can build your lab:
 - **Simple template** (no keys)
@@ -60,23 +60,28 @@ Also, during making your app you will be asked questions:
 - Do you want to add **Jquery** to template
 - What styles do you want to use (now only **CSS** and **SCSS**)
 
-#### Simple template based on CSS
+### Simple template based on CSS
 To make it, run (also choose CSS as default style):
 ```shell script
 npx create-web-lab
 ```
 
-## Available Scripts
+#### Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+##### `npm start`
 
 Runs the app in the development mode. <br>
-Your lab will automatically open in your default browser.
+Your lab will automatically open in your default browser. <br>
 
-**Pay attention to development feature**
+#### Development
+Learn more [here]()
+
+## Pay attention to development feature
 I'll describe you how to develop your lab using PhpStorm. <br>
+
+### Only for [simple CSS template](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-css)
 If you run app using ```npm start```, notice that php script wouldn't work. That's because live-server, which
 is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
 When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
