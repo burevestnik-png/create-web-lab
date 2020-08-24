@@ -2,7 +2,9 @@
 // Write your code here
 
 echo "
-<p>Made by 
+<p>
+    Made by <br>
     <a href=\"https://vk.com/gloomy.yarki\">Yaroslav Kulinich</a>
-     from P3213
-</p>";
+    <br> from P3213
+</p>
+";

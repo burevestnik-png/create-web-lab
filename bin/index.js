@@ -43,16 +43,16 @@ async function init() {
     console.log();
     console.log('Your settings:');
     console.log(
-        `${ chalk.cyan('Project name:') } ${ projectName }`
+        `${ chalk.cyan('Project name:') }      ${ projectName }`
     )
     console.log(
-        `${ chalk.cyan('Styles:') } ${ result.style }`
+        `${ chalk.cyan('Styles:') }            ${ result.style }`
     )
     console.log(
-        `${ chalk.cyan('Enable jquery:') } ${ result.enableJquery }`
+        `${ chalk.cyan('Enable jquery:') }     ${ result.enableJquery }`
     )
     console.log(
-        `${ chalk.cyan('Enable webpack:') } ${ (!!program.enableWebpack) }`
+        `${ chalk.cyan('Enable webpack:') }    ${ (!!program.enableWebpack) }`
     )
     console.log(
         `${ chalk.cyan('Enable typescript:') } ${ !!program.typescript }`
@@ -60,7 +60,7 @@ async function init() {
     console.log();
     console.log();
 
-    await createWebLab(
+    createWebLab(
         projectName,
         result.enableJquery,
         result.style,
@@ -91,7 +91,7 @@ async function createWebLab(
         description: "Project was initialized with create-web-lab",
         dependencies: {},
         devDependencies: {},
-        scripts: createScripts(enableWebpack, enableTypescript)
+        scripts: createScripts(enableWebpack, enableTypescript, style)
     };
 
     fs.writeFileSync(
@@ -104,76 +104,133 @@ async function createWebLab(
     process.chdir(root);
 
     if (!enableTypescript && !enableWebpack) {
-        console.log(`${ chalk.yellow('Installing dependencies -- it might take a few minutes...') }`);
+        console.log(`${ chalk.yellow('Installing dependencies -- it will take a few minutes...') }`);
         console.log()
-        if (enableJquery) await installPackage('jquery', false)
-        await installPackage('live-server');
+        await installDeps(enableWebpack, enableTypescript, enableJquery, style);
 
-        console.log(`${ chalk.green('Perfect! All dependencies installed, now let\'s copy template from npm server:') }`);
+        console.log(`${ chalk.green('Perfect! All dependencies installed, now let\'s create template:') }`);
         console.log()
 
-        console.log(chalk.yellow('Copying .gitignore...'));
+        console.log(chalk.yellow('Making .gitignore...'));
         getGitignore();
 
-        try {
-            await fs.copy(
-                path.join(__dirname, "../simple-template/index.html"),
-                `index.html`
-            );
-            console.log(chalk.yellow('Copying index.html...'));
+        await copySimpleTemplate(enableJquery, style);
+        console.log(chalk.green('Template was made successfully'));
 
-            await fs.copy(
-                path.join(__dirname, "../simple-template/server/server.php"),
-                `server/server.php`
-            );
-            console.log(chalk.yellow('Copying php script...'));
+        createEnding();
+    }
+}
 
-            await fs.copy(
-                path.join(__dirname, "../simple-template/js/script.js"),
-                `js/script.js`
-            );
-            console.log(chalk.yellow('Copying Js script...'));
+const createEnding = () => {
+    console.log();
+    console.log(chalk.green('All done! Your project is now ready.'));
+    console.log(chalk.green('Use below command to run the app:'));
+    console.log();
+    console.log(chalk.cyan(`cd ${ projectName }`));
+    console.log(chalk.cyan(`npm start`));
+}
 
-            await fs.copy(
-                path.join(__dirname, "../simple-template/assets/logo.png"),
-                `assets/logo.png`
-            );
-            console.log(chalk.yellow('Copying assets...'));
+const installDeps = async (
+    enableWebpack,
+    enableTypescript,
+    enableJquery,
+    style
+) => {
+    if (!enableTypescript && !enableWebpack) {
+        if (enableJquery) await installPackage('jquery', false)
 
-            if (style === 'css') {
-                await fs.copy(
-                    path.join(__dirname, "../simple-template/styles/css_style.css"),
-                    `styles/style.css`
-                );
-                console.log(chalk.yellow('Copying CSS styles...'));
-            } else {
-                await fs.copy(
-                    path.join(__dirname, "../simple-template/styles/scss_style.scss"),
-                    `styles/style.scss`
-                );
-                console.log(chalk.yellow('Copying SCSS styles...'));
-            }
-        } catch (e) {
-            console.error(chalk.red(e));
+        await installPackage('live-server');
+
+        if (style === 'SCSS') {
+            await installPackage('concurrently')
+            await installPackage('sass')
         }
-
-        console.log();
-        console.log(chalk.green('All done! Your project is now ready.'));
-        console.log(chalk.green('Use below command to run the app:'));
-        console.log();
-        console.log(chalk.cyan(`cd ${ projectName }`));
-        console.log(chalk.cyan(`npm start`));
     }
 }
 
 const createScripts = (
     enableWebpack,
-    enableTypescript
+    enableTypescript,
+    style
 ) => {
     if (!enableTypescript && !enableWebpack) {
-        return {
+        let scripts = {
             start: "live-server"
+        };
+
+        if (style === 'SCSS') {
+            scripts = {
+                start: "concurrently \"live-server\" \"sass --watch styles/style.scss styles/style.css\"",
+                sass: "sass --watch styles/style.scss styles/style.css"
+            }
         }
+
+        return scripts
+    }
+}
+
+const copySimpleTemplate = async (
+    enableJquery,
+    style
+) => {
+    try {
+        if (enableJquery) {
+            await fs.copy(
+                path.join(__dirname, "../simple-template/index_jquery.html"),
+                `index.html`
+            );
+            console.log(chalk.yellow('Making index.html...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/js/script_jquery.js"),
+                `js/script.js`
+            );
+            console.log(chalk.yellow('Making js/script.js...'));
+        } else {
+            await fs.copy(
+                path.join(__dirname, "../simple-template/index.html"),
+                `index.html`
+            );
+            console.log(chalk.yellow('Making index.html...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/js/script.js"),
+                `js/script.js`
+            );
+            console.log(chalk.yellow('Making js/script.js...'));
+        }
+
+        await fs.copy(
+            path.join(__dirname, "../simple-template/server/server.php"),
+            `server/server.php`
+        );
+        console.log(chalk.yellow('Making server/server.php...'));
+
+        await fs.copy(
+            path.join(__dirname, "../simple-template/assets/logo.png"),
+            `assets/logo.png`
+        );
+        await fs.copy(
+            path.join(__dirname, "../simple-template/assets/favicon.ico"),
+            `assets/favicon.ico`
+        );
+        console.log(chalk.yellow('Making assets...'));
+
+        if (style === 'CSS') {
+            await fs.copy(
+                path.join(__dirname, "../simple-template/styles/css_style.css"),
+                `styles/style.css`
+            );
+            console.log(chalk.yellow('Making CSS styles...'));
+        } else {
+            await fs.copy(
+                path.join(__dirname, "../simple-template/styles/scss_style.scss"),
+                `styles/style.scss`
+            );
+            console.log(chalk.yellow('Making SCSS styles...'));
+        }
+    } catch (e) {
+        console.error(chalk.red(e));
     }
 }
 

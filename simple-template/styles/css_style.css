@@ -1,4 +1,4 @@
- /*Write your code here*/
+/*Write your code here*/
 
 body {
   display: flex;
@@ -56,16 +56,46 @@ button:hover span:after {
 }
 
 p {
-  margin-top: 50px;
+  margin-top: 80px;
   color: white;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-style: italic;
+  text-align: center;
 }
 
 a {
+  background: linear-gradient(to right, orange, yellow, green, cyan, blue, violet);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-decoration: none;
   color: white;
-  border-radius: 10px;
-  padding: .5rem;
-  border: 1px solid white;
+}
+
+.animated {
+  animation-name: move;
+  animation-duration: .4s;
+  animation-fill-mode: both;
+  animation-delay: .7s;
+}
+
+.a1 {
+  animation-delay: .7s;
+}
+
+.a2 {
+  animation-delay: .8s;
+}
+
+@keyframes move {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-40px);
+  }
+
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
 }
