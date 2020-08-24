@@ -63,7 +63,7 @@ Also, during making your app you will be asked questions:
 ### Simple template based on CSS
 To make it, run (also choose CSS as default style):
 ```shell script
-npx create-web-lab
+npx create-web-lab my-lab
 ```
 
 #### Available Scripts
@@ -76,7 +76,29 @@ Runs the app in the development mode. <br>
 Your lab will automatically open in your default browser. <br>
 
 #### Development
-Learn more [here]()
+Learn more [here](https://github.com/burevestnik-png/create-web-lab#only-for-simple-css-template)
+
+### Simple template based on SCSS
+To make it, run (also choose SCSS as default style):
+```shell script
+npx create-web-lab my-lab
+```
+
+#### Available Scripts
+
+In the project directory, you can run:
+
+##### `npm start`
+
+Runs the app in the development mode. <br>
+Your lab will automatically open in your default browser. <br>
+
+##### `npm run sass`
+
+Compile default sass file to css.
+
+#### Development
+Learn more [here](https://github.com/burevestnik-png/create-web-lab#only-for-simple-scss-template)
 
 ## Pay attention to development feature
 I'll describe you how to develop your lab using PhpStorm. <br>
@@ -87,6 +109,14 @@ is installed as devDependency can't work with php, but it is **especially good t
 When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
 local server** (go to ```index.html``` file and in the right top you will see bar with browsers). Also, you need
 to **configure php in PhpStorm**.
+
+### Only for [simple SCSS template](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-scss)
+If you run app using ```npm start```, notice that php script wouldn't work. That's because live-server, which
+is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
+When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
+local server** (go to ```index.html``` file and in the right top you will see bar with browsers). Also, you need
+to **configure php in PhpStorm**. <br>
+**Before checking php scripts you should run ```npm run sass```** to compile your SCSS file to CSS.
 
 
 [stars-shield]: https://img.shields.io/github/stars/burevestnik-png/create-web-lab?style=social
