@@ -161,7 +161,7 @@ const createScripts = (
         if (style === 'SCSS') {
             scripts = {
                 start: "concurrently \"live-server\" \"sass --watch styles/style.scss styles/style.css\"",
-                sass: "sass --watch styles/style.scss styles/style.css"
+                sass: "sass styles/style.scss styles/style.css"
             }
         }
 
