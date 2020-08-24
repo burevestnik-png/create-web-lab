@@ -60,61 +60,7 @@ console.log('Disable jquery:', jqueryDisabled)
 console.log('Stylesheet:', stylesheet);
 console.log("\n\nStarted initializing project...");
 exec(
-    `mkdir ${ projectName } && cd ${ projectName } && npm init -f`,
-    ( initErr, initStdout, initStderr ) => {
-        if (initErr) {
-            console.log(initErr)
-            console.error(`Everything was fine, then it wasn't (probably such directory already exists): 
-            ${ initErr }`);
-            return;
-        }
 
-        const packageJSON = `${ projectName }/package.json`;
-        fs.readFile(
-            packageJSON,
-            ( error, file ) => {
-                if (error) throw error;
-                const data = file
-                    .toString()
-                    .replace(
-                        '"test": "echo \\"Error: no test specified\\" && exit 1"',
-                        createScripts()
-                    );
-                fs.writeFile(
-                    packageJSON,
-                    data,
-                    ( error2 ) => error2 || true);
-            });
-
-        https.get(
-            "https://raw.githubusercontent.com/burevestnik-png/create-web-lab/master/.gitignore",
-            ( response ) => {
-                response.setEncoding("utf8");
-                let body = "";
-                response.on(
-                    "data",
-                    ( data ) => {
-                        body += data;
-                    });
-                response.on(
-                    "end",
-                    () => {
-                        fs.writeFile(
-                            `${ projectName }/.gitignore`,
-                            body,
-                            { encoding: "utf-8" },
-                            ( err ) => {
-                                if (err) throw err;
-                            }
-                        );
-                    });
-            }
-        );
-        console.log("npm init -> done\n");
-
-        console.log("Installing deps -- it might take a few minutes...");
-        const deps = createDeps(pjson.dependencies);
-        const devDeps = createDeps(pjson.devDependencies);
         exec(
             `cd ${ projectName } && npm i -S ${ deps } && npm i -D ${ devDeps }`,
             async ( npmErr, npmStdout, npmStderr ) => {

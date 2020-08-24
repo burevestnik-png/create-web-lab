@@ -3,7 +3,8 @@
 const fs = require("fs-extra");
 const path = require("path");
 const https = require("https");
-const { exec } = require("child_process");
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
 const chalk = require('chalk');
 const os = require('os');
 const { Command } = require('commander');
@@ -59,7 +60,7 @@ async function init() {
     console.log();
     console.log();
 
-    createWebLab(
+    await createWebLab(
         projectName,
         result.enableJquery,
         result.style,
@@ -68,7 +69,7 @@ async function init() {
     )
 }
 
-function createWebLab(
+async function createWebLab(
     name,
     enableJquery,
     style,
@@ -97,49 +98,72 @@ function createWebLab(
         path.join(root, 'package.json'),
         JSON.stringify(packageJson, null, 2) + os.EOL
     );
+    console.log(chalk.green('package.json was initialized successfully'));
+    console.log()
 
     process.chdir(root);
 
     if (!enableTypescript && !enableWebpack) {
         console.log(`${ chalk.yellow('Installing dependencies -- it might take a few minutes...') }`);
         console.log()
-        if (enableJquery) installPackage('jquery', false)
-        installPackage('live-server');
+        if (enableJquery) await installPackage('jquery', false)
+        await installPackage('live-server');
 
+        console.log(`${ chalk.green('Perfect! All dependencies installed, now let\'s copy template from npm server:') }`);
         console.log()
-        console.log(`${ chalk.yellow('Perfect! All dependencies installed, now let\'s install template from npm server:)') }`);
 
+        console.log(chalk.yellow('Copying .gitignore...'));
+        getGitignore();
+
+        try {
+            await fs.copy(
+                path.join(__dirname, "../simple-template/index.html"),
+                `index.html`
+            );
+            console.log(chalk.yellow('Copying index.html...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/server/server.php"),
+                `server/server.php`
+            );
+            console.log(chalk.yellow('Copying php script...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/js/script.js"),
+                `js/script.js`
+            );
+            console.log(chalk.yellow('Copying Js script...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/assets/logo.png"),
+                `assets/logo.png`
+            );
+            console.log(chalk.yellow('Copying assets...'));
+
+            if (style === 'css') {
+                await fs.copy(
+                    path.join(__dirname, "../simple-template/styles/css_style.css"),
+                    `styles/style.css`
+                );
+                console.log(chalk.yellow('Copying CSS styles...'));
+            } else {
+                await fs.copy(
+                    path.join(__dirname, "../simple-template/styles/scss_style.scss"),
+                    `styles/style.scss`
+                );
+                console.log(chalk.yellow('Copying SCSS styles...'));
+            }
+        } catch (e) {
+            console.error(chalk.red(e));
+        }
 
         console.log();
-        console.log(
-            `All done!\n\nYour project is now ready\n\nUse the below command to run the app.\n\ncd ${ projectName }\nnpm start`
-        )
+        console.log(chalk.green('All done! Your project is now ready.'));
+        console.log(chalk.green('Use below command to run the app:'));
+        console.log();
+        console.log(chalk.cyan(`cd ${ projectName }`));
+        console.log(chalk.cyan(`npm start`));
     }
-
-    /* https.get(
-         "https://raw.githubusercontent.com/burevestnik-png/create-web-lab/master/.gitignore",
-         ( response ) => {
-             response.setEncoding("utf8");
-             let body = "";
-             response.on(
-                 "data",
-                 ( data ) => {
-                     body += data;
-                 });
-             response.on(
-                 "end",
-                 () => {
-                     fs.writeFile(
-                         `${ projectName } /).gitignore`,
-                         body,
-                         { encoding: "utf-8" },
-                         ( err ) => {
-                             if (err) throw err;
-                         }
-                     );
-                 });
-         }
-     );*/
 }
 
 const createScripts = (
@@ -153,20 +177,44 @@ const createScripts = (
     }
 }
 
-const installPackage = ( packageName, isDev = true ) => {
-    exec(
-        `
-        npm i ${ packageName } ${ isDev ? '-D' : '-S' }`,
-        ( npmErr, npmStdout, npmStderr ) => {
-            if (npmErr) {
-                console.error(`${ chalk.red('Caught error while installing dependencies:') }`)
-                console.log()
-                console.log(`${ chalk.red(npmErr) }`);
-                return;
-            }
-            console.log(`${ chalk.yellow(npmStdout) }`);
-        }
-    )
+const getGitignore = () => {
+    https.get(
+        "https://raw.githubusercontent.com/burevestnik-png/create-web-lab/master/.gitignore",
+        ( response ) => {
+            response.setEncoding("utf8");
+            let body = "";
+            response.on(
+                "data",
+                ( data ) => {
+                    body += data;
+                });
+            response.on(
+                "end",
+                () => {
+                    try {
+                        fs.writeFileSync(
+                            `.gitignore`,
+                            body,
+                            { encoding: "utf-8" }
+                        );
+                    } catch (e) {
+                        console.error(chalk.red(e));
+                    }
+                });
+        });
+}
+
+const installPackage = async ( packageName, isDev = true ) => {
+    const { error, stdout } = await exec(`npm i ${ packageName } ${ isDev ? '-D' : '-S' }`);
+
+    if (error) {
+        console.error(`${ chalk.red('Caught error while installing dependencies:') }`)
+        console.log()
+        console.log(`${ chalk.red(error) }`);
+        return
+    }
+
+    console.log(`${ chalk.yellow(stdout) }`);
 }
 
 module.exports = {
