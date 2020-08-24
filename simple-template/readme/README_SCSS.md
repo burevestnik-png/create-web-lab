@@ -17,8 +17,4 @@ Compile default sass file to css.
 
 ## Learn More
 
-You can learn more in the [Create Web Lab documentation](https://github.com/burevestnik-png/create-web-lab).
-
-### Deployment
-
-You can learn more in the [Create Web Lab documentation](https://github.com/burevestnik-png/create-web-lab).
+You can learn more in the [Create Web Lab documentation](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-scss).

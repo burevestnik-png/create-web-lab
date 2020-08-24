@@ -42,7 +42,7 @@ my-lab
 ├── server
 │   └── server.php
 ├── js
-│   └── script.png
+│   └── script.js
 └── style
     └── style.(css|scss)
 ```
@@ -66,6 +66,25 @@ To make it, run (also choose CSS as default style):
 npx create-web-lab my-lab
 ```
 
+#### Project structure
+```
+my-lab
+├── README.md
+├── node_modules
+├── package.json
+├── .gitignore
+├── index.html
+├── assets
+│   ├── favicon.ico
+│   └── logo.png
+├── server
+│   └── server.php
+├── js
+│   └── script.png
+└── style
+    └── style.css
+```
+
 #### Available Scripts
 
 In the project directory, you can run:
@@ -82,6 +101,25 @@ Learn more [here](https://github.com/burevestnik-png/create-web-lab#only-for-sim
 To make it, run (also choose SCSS as default style):
 ```shell script
 npx create-web-lab my-lab
+```
+
+#### Project structure
+```
+my-lab
+├── README.md
+├── node_modules
+├── package.json
+├── .gitignore
+├── index.html
+├── assets
+│   ├── favicon.ico
+│   └── logo.png
+├── server
+│   └── server.php
+├── js
+│   └── script.png
+└── style
+    └── style.scss
 ```
 
 #### Available Scripts
