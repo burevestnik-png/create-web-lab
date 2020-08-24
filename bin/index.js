@@ -222,12 +222,24 @@ const copySimpleTemplate = async (
                 `styles/style.css`
             );
             console.log(chalk.yellow('Making CSS styles...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/readme/README_CSS.md"),
+                `README.md`
+            );
+            console.log(chalk.yellow('Making README.md...'));
         } else {
             await fs.copy(
                 path.join(__dirname, "../simple-template/styles/scss_style.scss"),
                 `styles/style.scss`
             );
             console.log(chalk.yellow('Making SCSS styles...'));
+
+            await fs.copy(
+                path.join(__dirname, "../simple-template/readme/README_SCSS.md"),
+                `README.md`
+            );
+            console.log(chalk.yellow('Making README.md...'));
         }
     } catch (e) {
         console.error(chalk.red(e));
