@@ -156,6 +156,10 @@ local server** (go to ```index.html``` file and in the right top you will see ba
 to **configure php in PhpStorm**. <br>
 **Before checking php scripts you should run ```npm run sass```** to compile your SCSS file to CSS.
 
+## License
+
+Create Web Lab is open source software [licensed as MIT](https://github.com/burevestnik-png/create-web-lab/blob/master/LICENSE).
+
 
 [stars-shield]: https://img.shields.io/github/stars/burevestnik-png/create-web-lab?style=social
 [stars-url]: https://github.com/burevestnik-png/create-web-lab/stargazers
