@@ -94,6 +94,12 @@ async function createWebLab(
         scripts: createScripts(enableWebpack, enableTypescript, style)
     };
 
+    if (enableWebpack || enableTypescript) {
+        packageJson.browserlist = [
+            "> 0.25%, not dead"
+        ]
+    }
+
     fs.writeFileSync(
         path.join(root, 'package.json'),
         JSON.stringify(packageJson, null, 2) + os.EOL
@@ -115,6 +121,23 @@ async function createWebLab(
         getGitignore();
 
         await copySimpleTemplate(enableJquery, style);
+        console.log(chalk.green('Template was made successfully'));
+
+        createEnding();
+    }
+
+    if (!enableTypescript && enableWebpack) {
+        console.log(`${ chalk.yellow('Installing dependencies -- it will take a few minutes...') }`);
+        console.log()
+        await installDeps(enableWebpack, enableTypescript, enableJquery, style);
+
+        console.log(`${ chalk.green('Perfect! All dependencies installed, now let\'s create template:') }`);
+        console.log()
+
+        console.log(chalk.yellow('Making .gitignore...'));
+        getGitignore();
+
+        await copyWebpackTemplate(enableJquery, style);
         console.log(chalk.green('Template was made successfully'));
 
         createEnding();
@@ -146,6 +169,31 @@ const installDeps = async (
             await installPackage('sass')
         }
     }
+
+    if (!enableTypescript && enableWebpack) {
+        if (enableJquery) await installPackage('jquery', false)
+
+        await installPackage('webpack-cli')
+        await installPackage('webpack-dev-server')
+        await installPackage('webpack')
+        await installPackage('@babel/core')
+        await installPackage('@babel/preset-env')
+        await installPackage('babel-loader')
+        await installPackage('clean-webpack-plugin')
+        await installPackage('copy-webpack-plugin')
+        await installPackage('css-loader')
+        await installPackage('html-webpack-plugin')
+        await installPackage('mini-css-extract-plugin')
+        await installPackage('optimize-css-assets-webpack-plugin')
+        await installPackage('terser-webpack-plugin')
+        await installPackage('cross-env')
+
+        if (style === 'SCSS') {
+            // todo нужно ли
+            await installPackage('node-sass');
+            await installPackage('sass-loader');
+        }
+    }
 }
 
 const createScripts = (
@@ -166,6 +214,15 @@ const createScripts = (
         }
 
         return scripts
+    }
+
+    if (!enableTypescript && enableWebpack) {
+        return {
+            dev: "cross-env NODE_ENV=development webpack --mode development",
+            build: "cross-env NODE_ENV=production webpack --mode production",
+            start: "cross-env NODE_ENV=development webpack-dev-server --mode development --open",
+            stats: "webpack --json > statistics.json && webpack-bundle-analyzer statistics.json"
+        }
     }
 }
 
