@@ -1,12 +1,16 @@
-import './styles/style.scss'
+import * as $ from 'jquery';
+import './styles/style.css';
 
-document.getElementById('root-button').addEventListener('click', () => {
+const tsTestSyntax: string = 'Wow, it works!';
+
+$('#root-button').on('click', () => {
     fetch('server/server.php', {
         method: 'POST'
     })
         .then(response => response.text())
         .then(value => {
             console.log("Response from php script:", value);
-            document.querySelector('.placeholder').innerHTML = value;
+            $('.placeholder').html(value);
         })
 });
+

@@ -53,8 +53,8 @@ No configuration or complicated folder structures, only the files you need to bu
 If you run ```create-web-lab -h``` in terminal, you will recognise, that there several templates, on which you
 can build your lab:
 - **Simple template** (no keys)
-- **Webpack template** (key: -w) (IN PROCESS)
-- **Typescript template** based on webpack (key: -t) (IN PROCESS)
+- **Webpack template** (key: -w) 
+- **Typescript template** based on webpack (key: -t)
 
 Also, during making your app you will be asked questions:
 - Do you want to add **Jquery** to template
@@ -80,7 +80,7 @@ my-lab
 ├── server
 │   └── server.php
 ├── js
-│   └── script.png
+│   └── script.js
 └── style
     └── style.css
 ```
@@ -117,7 +117,7 @@ my-lab
 ├── server
 │   └── server.php
 ├── js
-│   └── script.png
+│   └── script.js
 └── style
     └── style.scss
 ```
@@ -138,7 +138,111 @@ Compile default sass file to css.
 #### Development
 Learn more [here](https://github.com/burevestnik-png/create-web-lab#only-for-simple-scss-template)
 
-## Pay attention to development feature
+### Template based on Webpack
+_In that template you won't have some troubles with production and development build, like in the simple template._ <br>
+Development doesn't change from style choose.
+
+To make it, run:
+```shell script
+npx create-web-lab my-lab -w
+```
+
+#### Project structure
+```
+my-lab
+├── README.md
+├── node_modules
+├── package.json
+├── .gitignore
+├── webpack.congig.js
+├── src
+│   ├── styles
+│   │   └── style.css || style.scss
+│   └── index.js
+├── server
+│   └── server.php
+└── public
+    ├── index.html
+    ├── logo.png
+    └── favicon.ico
+```
+
+#### Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode. <br>
+Your lab will automatically open in your default browser.
+
+### `npm run dev`
+
+Build your lab in development mode (files will be readable and won't be hashed). <br>
+Check your build in `root/build/`
+
+
+### `npm run build`
+
+Build your lab in production mode (files won't be readable and will be hashed). <br>
+Check your build in `root/build/`
+
+#### Development
+Learn more [here](https://github.com/burevestnik-png/create-web-lab#only-for-simple-scss-template)
+
+### Typescript template based on Webpack
+_In that template you won't have some troubles with production and development build, like in the simple template._ <br>
+Development doesn't change from style choose.
+
+To make it, run:
+```shell script
+npx create-web-lab my-lab -t
+```
+
+#### Project structure
+```
+my-lab
+├── README.md
+├── node_modules
+├── package.json
+├── .gitignore
+├── webpack.congig.js
+├── src
+│   ├── styles
+│   │   └── style.css || style.scss
+│   └── index.ts
+├── server
+│   └── server.php
+└── public
+    ├── index.html
+    ├── logo.png
+    └── favicon.ico
+```
+
+#### Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode. <br>
+Your lab will automatically open in your default browser.
+
+### `npm run dev`
+
+Build your lab in development mode (files will be readable and won't be hashed). <br>
+Check your build in `root/build/`
+
+
+### `npm run build`
+
+Build your lab in production mode (files won't be readable and will be hashed). <br>
+Check your build in `root/build/`
+
+#### Development
+Learn more [here](https://github.com/burevestnik-png/create-web-lab#only-for-simple-scss-template)
+
+## Pay attention to development
 I'll describe you how to develop your lab using PhpStorm. <br>
 
 ### Only for [simple CSS template](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-css)
@@ -149,6 +253,14 @@ local server** (go to ```index.html``` file and in the right top you will see ba
 to **configure php in PhpStorm**.
 
 ### Only for [simple SCSS template](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-scss)
+If you run app using ```npm start```, notice that php script wouldn't work. That's because live-server, which
+is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
+When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
+local server** (go to ```index.html``` file and in the right top you will see bar with browsers). Also, you need
+to **configure php in PhpStorm**. <br>
+**Before checking php scripts you should run ```npm run sass```** to compile your SCSS file to CSS.
+
+### Only for [webpack template](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-scss)
 If you run app using ```npm start```, notice that php script wouldn't work. That's because live-server, which
 is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
 When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm

@@ -95,7 +95,7 @@ async function createWebLab(
     };
 
     if (enableWebpack || enableTypescript) {
-        packageJson.browserlist = [
+        packageJson.browserslist = [
             "> 0.25%, not dead"
         ]
     }
@@ -142,6 +142,23 @@ async function createWebLab(
 
         createEnding();
     }
+
+    if (enableTypescript) {
+        console.log(`${ chalk.yellow('Installing dependencies -- it will take a few minutes...') }`);
+        console.log()
+        await installDeps(enableWebpack, enableTypescript, enableJquery, style);
+
+        console.log(`${ chalk.green('Perfect! All dependencies installed, now let\'s create template:') }`);
+        console.log()
+
+        console.log(chalk.yellow('Making .gitignore...'));
+        getGitignore();
+
+        await copyTypescriptTemplate(enableJquery, style);
+        console.log(chalk.green('Template was made successfully'));
+
+        createEnding();
+    }
 }
 
 const createEnding = () => {
@@ -168,31 +185,38 @@ const installDeps = async (
             await installPackage('concurrently')
             await installPackage('sass')
         }
+
+        return
     }
 
-    if (!enableTypescript && enableWebpack) {
-        if (enableJquery) await installPackage('jquery', false)
+    if (enableJquery) {
+        await installPackage('jquery', false);
+    }
 
-        await installPackage('webpack-cli')
-        await installPackage('webpack-dev-server')
-        await installPackage('webpack')
-        await installPackage('@babel/core')
-        await installPackage('@babel/preset-env')
-        await installPackage('babel-loader')
-        await installPackage('clean-webpack-plugin')
-        await installPackage('copy-webpack-plugin')
-        await installPackage('css-loader')
-        await installPackage('html-webpack-plugin')
-        await installPackage('mini-css-extract-plugin')
-        await installPackage('optimize-css-assets-webpack-plugin')
-        await installPackage('terser-webpack-plugin')
-        await installPackage('cross-env')
+    await installPackage('webpack-cli')
+    await installPackage('webpack-dev-server')
+    await installPackage('webpack')
+    await installPackage('@babel/core')
+    await installPackage('@babel/preset-env')
+    await installPackage('babel-loader')
+    await installPackage('clean-webpack-plugin')
+    await installPackage('copy-webpack-plugin')
+    await installPackage('css-loader')
+    await installPackage('html-webpack-plugin')
+    await installPackage('mini-css-extract-plugin')
+    await installPackage('optimize-css-assets-webpack-plugin')
+    await installPackage('terser-webpack-plugin')
+    await installPackage('cross-env')
 
-        if (style === 'SCSS') {
-            // todo нужно ли
-            await installPackage('node-sass');
-            await installPackage('sass-loader');
-        }
+    if (style === 'SCSS') {
+        // todo нужно ли
+        await installPackage('node-sass');
+        await installPackage('sass-loader');
+    }
+
+    if (enableTypescript) {
+        await installPackage('@babel/preset-typescript');
+        if (enableJquery) await installPackage('@types/jquery', false)
     }
 }
 
@@ -216,17 +240,108 @@ const createScripts = (
         return scripts
     }
 
-    if (!enableTypescript && enableWebpack) {
+    if (enableTypescript || enableWebpack) {
         return {
             dev: "cross-env NODE_ENV=development webpack --mode development",
             build: "cross-env NODE_ENV=production webpack --mode production",
-            start: "cross-env NODE_ENV=development webpack-dev-server --mode development --open",
-            stats: "webpack --json > statistics.json && webpack-bundle-analyzer statistics.json"
+            start: "cross-env NODE_ENV=development webpack-dev-server --mode development --open"
         }
     }
 }
 
-const copyWebpackTemplate = async(
+const copyTypescriptTemplate = async (
+    enableJquery,
+    style
+) => {
+    const src = '../typescript-template/src/';
+    const server = '../typescript-template/server/'
+    const publicDir = '../typescript-template/public/';
+    const readme = '../typescript-template/readme/'
+    const root = '../typescript-template/';
+    const styles = '../typescript-template/src/styles/';
+
+    try {
+        switch (style) {
+            case 'CSS':
+                if (enableJquery) {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index_jquery.ts'),
+                        `src/index.ts`
+                    );
+                    console.log(chalk.yellow('Making src/index.ts...'));
+                } else {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index.ts'),
+                        `src/index.ts`
+                    );
+                    console.log(chalk.yellow('Making src/index.ts...'));
+                }
+
+                await fs.copy(
+                    path.join(__dirname, styles + 'css_style.css'),
+                    'src/styles/style.css'
+                );
+                console.log(chalk.yellow('Making src/styles/style.css...'));
+
+                await fs.copy(
+                    path.join(__dirname, root + 'webpack.config.css.js'),
+                    'webpack.config.js'
+                )
+                console.log(chalk.yellow('Making webpack.config.js...'));
+                break;
+            case 'SCSS':
+                if (enableJquery) {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index_jquery_scss.ts'),
+                        `src/index.ts`
+                    );
+                    console.log(chalk.yellow('Making src/index.ts...'));
+                } else {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index_scss.ts'),
+                        `src/index.ts`
+                    );
+                    console.log(chalk.yellow('Making src/index.ts...'));
+                }
+
+                await fs.copy(
+                    path.join(__dirname, styles + 'scss_style.scss'),
+                    'src/styles/style.scss'
+                );
+                console.log(chalk.yellow('Making src/styles/style.scss...'));
+
+                await fs.copy(
+                    path.join(__dirname, root + 'webpack.config.scss.js'),
+                    'webpack.config.js'
+                )
+                console.log(chalk.yellow('Making webpack.config.js...'));
+                break;
+        }
+
+        await fs.copy(
+            path.join(__dirname, readme + 'README.md'),
+            'README.md'
+        );
+        console.log(chalk.yellow('Making README.md...'))
+
+
+        await fs.copy(
+            path.join(__dirname, publicDir),
+            'public/'
+        );
+        console.log(chalk.yellow('Making assets and index.html...'))
+
+        await fs.copy(
+            path.join(__dirname, server),
+            `server/`
+        );
+        console.log(chalk.yellow('Making server/server.php...'));
+    } catch (e) {
+        console.log(chalk.red(e))
+    }
+}
+
+const copyWebpackTemplate = async (
     enableJquery,
     style
 ) => {
@@ -235,7 +350,7 @@ const copyWebpackTemplate = async(
     const publicDir = '../webpack-template/public/';
     const readme = '../webpack-template/readme/'
     const root = '../webpack-template/';
-    const styles = '../webpack-template/src/styles';
+    const styles = '../webpack-template/src/styles/';
 
     try {
         switch (style) {
@@ -246,13 +361,18 @@ const copyWebpackTemplate = async(
                         `src/index.js`
                     );
                     console.log(chalk.yellow('Making src/index.js...'));
-                    break;
+                } else {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index.js'),
+                        `src/index.js`
+                    );
+                    console.log(chalk.yellow('Making src/index.js...'));
                 }
 
                 await fs.copy(
                     path.join(__dirname, styles + 'css_style.css'),
                     'src/styles/style.css'
-                )
+                );
                 console.log(chalk.yellow('Making src/styles/style.css...'));
 
                 await fs.copy(
@@ -260,18 +380,6 @@ const copyWebpackTemplate = async(
                     'webpack.config.js'
                 )
                 console.log(chalk.yellow('Making webpack.config.js...'));
-
-                await fs.copy(
-                    path.join(__dirname, readme + 'README_CSS.md'),
-                    'README.md'
-                );
-                console.log(chalk.yellow('Making README.md...'))
-
-                await fs.copy(
-                    path.join(__dirname, src + 'index.js'),
-                    `src/index.js`
-                );
-                console.log(chalk.yellow('Making src/index.js...'));
                 break;
             case 'SCSS':
                 if (enableJquery) {
@@ -280,13 +388,18 @@ const copyWebpackTemplate = async(
                         `src/index.js`
                     );
                     console.log(chalk.yellow('Making src/index.js...'));
-                    break;
+                } else {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index_scss.js'),
+                        `src/index.js`
+                    );
+                    console.log(chalk.yellow('Making src/index.js...'));
                 }
 
                 await fs.copy(
                     path.join(__dirname, styles + 'scss_style.scss'),
                     'src/styles/style.scss'
-                )
+                );
                 console.log(chalk.yellow('Making src/styles/style.scss...'));
 
                 await fs.copy(
@@ -294,20 +407,14 @@ const copyWebpackTemplate = async(
                     'webpack.config.js'
                 )
                 console.log(chalk.yellow('Making webpack.config.js...'));
-
-                await fs.copy(
-                    path.join(__dirname, readme + 'README_SCSS.md'),
-                    'README.md'
-                );
-                console.log(chalk.yellow('Making README.md...'))
-
-                await fs.copy(
-                    path.join(__dirname, src + 'index_jquery_scss.js'),
-                    `src/index.js`
-                );
-                console.log(chalk.yellow('Making src/index_scss.js...'));
                 break;
         }
+
+        await fs.copy(
+            path.join(__dirname, readme + 'README.md'),
+            'README.md'
+        );
+        console.log(chalk.yellow('Making README.md...'))
 
         await fs.copy(
             path.join(__dirname, publicDir),
@@ -315,6 +422,11 @@ const copyWebpackTemplate = async(
         );
         console.log(chalk.yellow('Making assets and index.html...'))
 
+        await fs.copy(
+            path.join(__dirname, server),
+            `server/`
+        );
+        console.log(chalk.yellow('Making server/server.php...'));
     } catch (e) {
         console.log(chalk.red(e))
     }
