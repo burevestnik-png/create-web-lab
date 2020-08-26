@@ -259,7 +259,7 @@ const copyWebpackTemplate = async (
     const src = `../webpack-template/src/${extension}/`;
     const publicDir = '../webpack-template/public/';
     const readme = '../webpack-template/readme/'
-    const webpack = `../webpack-template/${extension}/`;
+    const webpack = `../webpack-template/webpack/${extension}/`;
 
     try {
         switch (style) {
@@ -327,6 +327,7 @@ const copyWebpackTemplate = async (
         await copyCommonFiles();
     } catch (e) {
         console.log(chalk.red(e))
+        process.exit(1)
     }
 }
 
