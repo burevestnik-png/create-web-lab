@@ -253,13 +253,21 @@ local server** (go to ```index.html``` file and in the right top you will see ba
 to **configure php in PhpStorm**.
 
 ### Only for [simple SCSS template](https://github.com/burevestnik-png/create-web-lab#template-based-on-webpack)
+If you run app using ```npm start```, notice that php script wouldn't work. That's because live-server, which
+is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
+When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
+local server** (go to ```index.html``` file and in the right top you will see bar with browsers). Also, you need
+to **configure php in PhpStorm**. <br>
+**Before checking php scripts you should run ```npm run sass```** to compile your SCSS file to CSS.
+
+### Only for [webpack template](https://github.com/burevestnik-png/create-web-lab#template-based-on-webpack)
 If you run app using ```npm start```, notice that php script wouldn't work. That's because dev-server, which
 is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
 When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
 local server**. For checking back, run `npm run dev` and go to `build`. Press on `index.html` file and in the right 
 top you will see bar with browsers. Also, you need to **configure php in PhpStorm**. <br>
 
-### Only for [webpack template](https://github.com/burevestnik-png/create-web-lab#typescript-template-based-on-webpack)
+### Only for [typescript template](https://github.com/burevestnik-png/create-web-lab#typescript-template-based-on-webpack)
 If you run app using ```npm start```, notice that php script wouldn't work. That's because dev-server, which
 is installed as devDependency can't work with php, but it is **especially good to make up front-end of your lab**. <br>
 When your front will be ready, to check working capacity of your back-end you will need to use **built in PhpStorm
