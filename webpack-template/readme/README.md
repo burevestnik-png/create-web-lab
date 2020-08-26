@@ -24,4 +24,4 @@ Check your build in `root/build/`
 
 ## Learn More
 
-You can learn more in the [Create Web Lab documentation](https://github.com/burevestnik-png/create-web-lab#simple-template-based-on-css).
+You can learn more in the [Create Web Lab documentation](https://github.com/burevestnik-png/create-web-lab#template-based-on-webpack).
