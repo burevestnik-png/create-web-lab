@@ -226,6 +226,100 @@ const createScripts = (
     }
 }
 
+const copyWebpackTemplate = async(
+    enableJquery,
+    style
+) => {
+    const src = '../webpack-template/src/';
+    const server = '../webpack-template/server/'
+    const publicDir = '../webpack-template/public/';
+    const readme = '../webpack-template/readme/'
+    const root = '../webpack-template/';
+    const styles = '../webpack-template/src/styles';
+
+    try {
+        switch (style) {
+            case 'CSS':
+                if (enableJquery) {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index_jquery.js'),
+                        `src/index.js`
+                    );
+                    console.log(chalk.yellow('Making src/index.js...'));
+                    break;
+                }
+
+                await fs.copy(
+                    path.join(__dirname, styles + 'css_style.css'),
+                    'src/styles/style.css'
+                )
+                console.log(chalk.yellow('Making src/styles/style.css...'));
+
+                await fs.copy(
+                    path.join(__dirname, root + 'webpack.config.css.js'),
+                    'webpack.config.js'
+                )
+                console.log(chalk.yellow('Making webpack.config.js...'));
+
+                await fs.copy(
+                    path.join(__dirname, readme + 'README_CSS.md'),
+                    'README.md'
+                );
+                console.log(chalk.yellow('Making README.md...'))
+
+                await fs.copy(
+                    path.join(__dirname, src + 'index.js'),
+                    `src/index.js`
+                );
+                console.log(chalk.yellow('Making src/index.js...'));
+                break;
+            case 'SCSS':
+                if (enableJquery) {
+                    await fs.copy(
+                        path.join(__dirname, src + 'index_jquery_scss.js'),
+                        `src/index.js`
+                    );
+                    console.log(chalk.yellow('Making src/index.js...'));
+                    break;
+                }
+
+                await fs.copy(
+                    path.join(__dirname, styles + 'scss_style.scss'),
+                    'src/styles/style.scss'
+                )
+                console.log(chalk.yellow('Making src/styles/style.scss...'));
+
+                await fs.copy(
+                    path.join(__dirname, root + 'webpack.config.scss.js'),
+                    'webpack.config.js'
+                )
+                console.log(chalk.yellow('Making webpack.config.js...'));
+
+                await fs.copy(
+                    path.join(__dirname, readme + 'README_SCSS.md'),
+                    'README.md'
+                );
+                console.log(chalk.yellow('Making README.md...'))
+
+                await fs.copy(
+                    path.join(__dirname, src + 'index_jquery_scss.js'),
+                    `src/index.js`
+                );
+                console.log(chalk.yellow('Making src/index_scss.js...'));
+                break;
+        }
+
+        await fs.copy(
+            path.join(__dirname, publicDir),
+            'public/'
+        );
+        console.log(chalk.yellow('Making assets and index.html...'))
+
+    } catch (e) {
+        console.log(chalk.red(e))
+    }
+}
+
 const copySimpleTemplate = async (
     enableJquery,
     style

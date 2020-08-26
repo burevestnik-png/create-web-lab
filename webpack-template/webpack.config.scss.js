@@ -5,7 +5,6 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const TerserWebpackPlugin = require('terser-webpack-plugin')
 const OptimizeCssAssetWebpackPlugin = require('optimize-css-assets-webpack-plugin')
-const webpack = require("webpack");
 
 const environment = process.env.NODE_ENV;
 
@@ -79,7 +78,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.scss$/,
                 use: [
                     {
                         loader: MiniCssExtractPlugin.loader,
@@ -88,7 +87,8 @@ module.exports = {
                             reloadAll: true
                         }
                     },
-                    'css-loader'
+                    'css-loader',
+                    'sass-loader'
                 ]
             },
             {
